@@ -132,10 +132,23 @@ coef(summary(sat.voting.mod))
 ##   1. Examine/plot the data before fitting the model
 ##   2. Print and interpret the model `summary'
 ##   3. `plot' the model to look for deviations from modeling assumptions
+summary(states.data)
+library(ggplot2)
+ggplot(states.data, aes(x=metro, y=energy)) + geom_point()
+summary(lm(energy ~ metro, data=states.data))
+ggplot(states.data, aes(x=metro, y=energy)) + geom_point() + geom_smooth(method="lm", fill=NA)
 
 ##   Select one or more additional predictors to add to your model and
 ##   repeat steps 1-3. Is this model significantly better than the model
 ##   with /metro/ as the only predictor?
+summary(lm(energy~ metro + pop + density + toxic + green + waste, data=states.data)) #R2 = .7691, R2adj = .7353
+summary(lm(energy~ metro + toxic + green, data=states.data)) #R2=.7644, R2adj=.7483
+summary(lm(energy~ toxic + green, data=states.data)) #R2=.7627, R2adj=.7521 probably best model
+summary(lm(energy~ toxic + green + area, data=states.data)) #R2=.7802, R2adj=.7652 
+
+ggplot(states.data, aes(x=toxic, y=energy, color=green)) + geom_point()
+ggplot(states.data, aes(x=green, y=energy, color=toxic)) + geom_point()
+
 
 ## Interactions and factors
 ## ══════════════════════════
@@ -200,6 +213,12 @@ coef(summary(lm(csat ~ C(region, contr.helmert),
 
 ##   1. Add on to the regression equation that you created in exercise 1 by
 ##      generating an interaction term and testing the interaction.
+summary(lm(energy ~ toxic*green + area, data=states.data)) 
 
 ##   2. Try adding region to the model. Are there significant differences
 ##      across the four regions?
+
+summary(lm(energy ~ green*toxic + area + region, data=states.data)) 
+#Very! The NE appears to deviate significantly from the model. Interesting!
+
+
